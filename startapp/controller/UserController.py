@@ -1,8 +1,15 @@
 from flask import Blueprint, request
+from startapp.model.baseModel import db
 from startapp.service.userService import create_user, insert_one, get_all
 from startapp.model.userModel import UserModel
+from  startapp.model.jobModel import JobModel
 
 user = Blueprint("user", __name__, url_prefix="/user")
+
+# 定义一个settimeout api
+import threading
+def setTimeout(cb,delay,*args):
+    threading.Timer(delay,cb,args).start()
 
 @user.route('/', methods=['GET', 'POST'])
 def index():
@@ -35,5 +42,38 @@ def getall():
     return {
         "status": 200,
         "msg": "查询成功",
+        # "data": get_all(UserModel)
         "data": repr(get_all(UserModel))
+    }
+
+# 插入爬虫任务
+@user.route('/addjob', methods=['GET', 'POST'])
+def addjob():
+    data=request.get_json()
+    # username=data["username"]
+    url=data["url"]
+    uuid=data["uuid"]
+    job = JobModel(username='admin', uuid=uuid,url=url,status='1')
+    try:
+        db.session.add(job)
+        db.session.commit()
+        status=1
+    except:
+        status=-1
+    # 先返回值，然后等3s再启动任务
+    # setTimeout()
+    return {
+        "data":data,
+        "status": status,
+        "msg": "插入成功"
+    }
+
+@user.route('/getjob', methods=['GET', 'POST'])
+def getjob():
+    job = JobModel()
+    job.query.all()
+    return {
+        "data": repr(job.query.all()),
+        "status": 1,
+        "msg": "查询成功"
     }
