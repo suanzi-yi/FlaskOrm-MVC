@@ -3,7 +3,7 @@ from startapp.model.baseModel import db
 from startapp.service.userService import create_user, insert_one, get_all
 from startapp.model.userModel import UserModel
 from  startapp.model.jobModel import JobModel
-
+from startapp.util.scrapyNBA import task1,task2,task3,task4
 user = Blueprint("user", __name__, url_prefix="/user")
 
 # 定义一个settimeout api
@@ -74,6 +74,42 @@ def getjob():
     job.query.all()
     return {
         "data": repr(job.query.all()),
+        "status": 1,
+        "msg": "查询成功"
+    }
+@user.route('/getalldata', methods=['GET', 'POST'])
+def getalldata():
+    data=task4()
+    return {
+        "data": data,
+        "status": 1,
+        "msg": "查询成功"
+    }
+#三大位置能力折线图参数[[],[],[],[]]
+@user.route('/threeability', methods=['GET', 'POST'])
+def threeability():
+    data=task1()
+    return {
+        "data":data,
+        "status": 1,
+        "msg": "查询成功"
+    }
+#个人能力归一化图，参数name [{},{},{},{}]
+@user.route('/onedata', methods=['GET', 'POST'])
+def onedata():
+    name = request.values.get("name")
+    data=task2(name)
+    return {
+        "data":data,
+        "status": 1,
+        "msg": "查询成功"
+    }
+#top5堆积图 [[],[],[]]
+@user.route('/top5', methods=['GET', 'POST'])
+def top5():
+    data=task3()
+    return {
+        "data":data,
         "status": 1,
         "msg": "查询成功"
     }
