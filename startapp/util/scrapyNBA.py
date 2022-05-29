@@ -249,7 +249,7 @@ def task4():#三大位置得分top50球员的数据比较
     F_data=getData2(url_forward)
     C_data=getData2(url_centre)
     list=A_data
-    print(list)
+    # print(list)
     return  list
 
 def getData2(url):
